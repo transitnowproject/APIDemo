@@ -11,7 +11,7 @@ import com.example.angel.apidemo.R;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView txt1;
+
     private Button btnLogin,btnRegister;
 
     @Override
@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        txt1= (TextView) findViewById(R.id.txt1);
+
         btnLogin= (Button) findViewById(R.id.btnLogin);
         btnRegister= (Button) findViewById(R.id.btnRegister);
 

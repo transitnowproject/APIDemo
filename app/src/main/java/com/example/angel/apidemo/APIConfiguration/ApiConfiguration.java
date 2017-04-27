@@ -6,7 +6,7 @@ package com.example.angel.apidemo.APIConfiguration;
 
 public class ApiConfiguration {
 
-    private String api = "http://192.168.57.210:8088/api/";
+    private String api = "http://192.168.57.210:8088/API/";
     private String imageURL = "http://192.168.57.210:8088/UserImages/";
 
     public String getApi() {

@@ -105,7 +105,7 @@ public class HttpRequestProcessor {
             urlConnection.setDoInput(true);
             urlConnection.setDoOutput(true);
             urlConnection.setRequestMethod("PUT");
-            urlConnection.setRequestProperty("Content-Type", "application/json");
+            urlConnection.setRequestProperty("Content-Type", "Application/json");
             urlConnection.setReadTimeout(15000); //Sets the maximum time to wait for an input stream read to complete before giving up
             urlConnection.setConnectTimeout(15000); //Sets the maximum time in milliseconds to wait while connecting
             OutputStreamWriter out = new OutputStreamWriter(urlConnection.getOutputStream());

@@ -15,23 +15,21 @@ import com.example.angel.apidemo.HttpRequestProcessor.HttpRequestProcessor;
 import com.example.angel.apidemo.HttpRequestProcessor.Response;
 import com.example.angel.apidemo.R;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class RegistrationActivity extends AppCompatActivity {
 
     private EditText edtName, edtAddress, edtEmailID, edtPhone, edtUserName, edtPassword;
-    private String name, address, emailID, phone, userName, password;
+    private String Name, Address, EmailId, MobileNo, UserName, Password;
     private Button btnRegister;
     private HttpRequestProcessor httpRequestProcessor;
     private Response response;
     private ApiConfiguration apiConfiguration;
     private String baseURL, urlRegister;
     private String jsonPostString, jsonResponseString;
-    private String message;
+    private int responseData;
     private boolean success;
-    private int userID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +52,8 @@ public class RegistrationActivity extends AppCompatActivity {
 
         //Getting BaseURL
         baseURL = apiConfiguration.getApi();
-        urlRegister = baseURL + "Registration/Register";
+        urlRegister = baseURL + "AccountAPI/SaveApplicationUser";
+        Log.e("url",urlRegister);
 
         //On clicking register Button
 
@@ -62,13 +61,16 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //Getting values
-                name = edtName.getText().toString();
-                address = edtAddress.getText().toString();
-                emailID = edtEmailID.getText().toString();
-                phone = edtPhone.getText().toString();
-                userName = edtUserName.getText().toString();
-                password = edtPassword.getText().toString();
-                new RegistrationTask().execute(name, address, emailID, phone, userName, password);
+                Name = edtName.getText().toString();
+                Address = edtAddress.getText().toString();
+                EmailId = edtEmailID.getText().toString();
+                MobileNo = edtPhone.getText().toString();
+                UserName = edtUserName.getText().toString();
+                Password = edtPassword.getText().toString();
+                new RegistrationTask().execute(Name, Address, EmailId, MobileNo, UserName, Password);
+                // Toast.makeText(getBaseContext(),"Data Fetched",Toast.LENGTH_LONG).show();;
+                //  Intent intent = new Intent(RegistrationActivity.this,LoginActivity.class);
+                // startActivity(intent);
             }
         });
     }
@@ -76,26 +78,36 @@ public class RegistrationActivity extends AppCompatActivity {
     private class RegistrationTask extends AsyncTask<String, String, String> {
         @Override
         protected String doInBackground(String... params) {
-            name = params[0];
-            Log.e("Name", name);
-            address = params[1];
-            emailID = params[2];
-            phone = params[3];
-            userName = params[4];
-            password = params[5];
+            Name = params[0];
+            Log.e("Name", Name);
+            Address = params[1];
+            Log.e("Address", Address);
+            EmailId = params[2];
+            MobileNo = params[3];
+            UserName = params[4];
+            Password = params[5];
 
             JSONObject jsonObject = new JSONObject();
             try {
-                jsonObject.put("Name", name);
-                jsonObject.put("Address", address);
-                jsonObject.put("EmailId", emailID);
-                jsonObject.put("Phone", phone);
-                jsonObject.put("UserName", userName);
-                jsonObject.put("Password", password);
+                jsonObject.put("Name", Name);
+                jsonObject.put("Address", Address);
+                jsonObject.put("EmailId", EmailId);
+                jsonObject.put("MobileNo", MobileNo);
+                jsonObject.put("Gender", "M");
+                jsonObject.put("DateOfBirth", "2011-10-04");
+                jsonObject.put("FatherName", "ABC ");
+                jsonObject.put("MotherName", "xyz ");
+                jsonObject.put("UserName", UserName);
+                jsonObject.put("Password", Password);
+                jsonObject.put("CreatedBy", "1");
+                jsonObject.put("ModifiedBy", "1");
+
 
                 jsonPostString = jsonObject.toString();
+                Log.e("jsonPostString", jsonPostString );
                 response = httpRequestProcessor.pOSTRequestProcessor(jsonPostString, urlRegister);
                 jsonResponseString = response.getJsonResponseString();
+                Log.e("jsonResponseString",jsonResponseString);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -106,47 +118,24 @@ public class RegistrationActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Log.d("Response String", s);
+           // Log.d("Response String", s);
 
             try {
                 JSONObject jsonObject = new JSONObject(s);
                 success = jsonObject.getBoolean("success");
                 Log.d("Success", String.valueOf(success));
-                message = jsonObject.getString("message");
-                Log.d("message", message);
 
-                if (success) {
+                responseData = jsonObject.getInt("responseData");
+                // Log.d("message", message);
 
-                    JSONArray responseData = jsonObject.getJSONArray("responseData");
-                    for (int i = 0; i < responseData.length(); i++) {
-                        JSONObject object = responseData.getJSONObject(i);
-                        userID = object.getInt("UserId");
-                        Log.d("userId", String.valueOf(userID));
-                        name = object.getString("Name");
-                        Log.d("name", name);
-                        address = object.getString("Address");
-                        Log.d("address", address);
-                        emailID = object.getString("EmailId");
-                        Log.d("emailId", emailID);
-                        phone = object.getString("Phone");
-                        Log.d("phone", phone);
-                        userName = object.getString("UserName");
-                        Log.d("userName", userName);
-                        password = object.getString("UserName");
-                        Log.d("password", password);
-                    }
-
-                    startActivity(new Intent(RegistrationActivity.this, LoginActivity.class));
+                if (responseData == 1) {
+                    Toast.makeText(RegistrationActivity.this, "Data Registered Successfully", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(RegistrationActivity.this, LoginActivity.class);
+                    startActivity(intent);
                 } else {
-                    Toast.makeText(RegistrationActivity.this, message, Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegistrationActivity.this, "Registration Unsuccessful", Toast.LENGTH_LONG).show();
                 }
 
-
-                /*if (success) {
-                    startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                } else {
-                    Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_LONG).show();
-                }*/
 
             } catch (JSONException e) {
                 e.printStackTrace();

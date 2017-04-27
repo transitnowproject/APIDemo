@@ -21,9 +21,9 @@ import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText edtName, edtPassword;
+    private EditText edtEmail, edtPassword;
     private Button btnLogin, btnRegister;
-    private String name, passwd;
+    private String email, passwd;
     private HttpRequestProcessor httpRequestProcessor;
     private Response response;
     private ApiConfiguration apiConfiguration;
@@ -38,10 +38,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        edtName = (EditText) findViewById(R.id.edtEmail);
+        edtEmail = (EditText) findViewById(R.id.edtEmail);
         edtPassword = (EditText) findViewById(R.id.edtPassword);
         btnLogin = (Button) findViewById(R.id.btnLogin);
-
+        btnRegister = (Button) findViewById(R.id.btnRegister);
 
         //Initialization
         httpRequestProcessor = new HttpRequestProcessor();
@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
 
         //Getting base url
         baseURL = apiConfiguration.getApi();
-        urlLogin = baseURL + "Registration/GetLogin";
+        urlLogin = baseURL + "AccountAPI/GetLoginUser";
 
 
         //On clicking login button
@@ -58,11 +58,13 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                //Getting name and password
-                name = edtName.getText().toString();
+                //Getting email and password
+                email = edtEmail.getText().toString();
                 passwd = edtPassword.getText().toString();
 
-                new LoginTask().execute(name, passwd);
+                new LoginTask().execute(email, passwd);
+
+
 
             }
         });
@@ -73,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
                 startActivity(intent);
 
             }
@@ -86,12 +88,12 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... params) {
-            name = params[0];
+            email = params[0];
             passwd = params[1];
 
             JSONObject jsonObject = new JSONObject();
             try {
-                jsonObject.put("UserName", name);
+                jsonObject.put("UserName", email);
                 jsonObject.put("Password", passwd);
 
                 jsonStringToPost = jsonObject.toString();
@@ -123,8 +125,8 @@ public class LoginActivity extends AppCompatActivity {
                         JSONObject object = responseData.getJSONObject(i);
                         userID = object.getInt("UserId");
                         Log.d("userId", String.valueOf(userID));
-                        name = object.getString("Name");
-                        Log.d("name", name);
+                        email = object.getString("Name");
+                        Log.d("email", email);
                         address = object.getString("Address");
                         Log.d("address", address);
                         emailID = object.getString("EmailId");
@@ -137,7 +139,7 @@ public class LoginActivity extends AppCompatActivity {
                         Log.d("password", password);
                     }
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra("name", name);
+                    intent.putExtra("email", email);
                     startActivity(intent);
                 } else {
                     Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
